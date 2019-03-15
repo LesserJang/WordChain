@@ -46,19 +46,19 @@ public class WordManager {
         return set;
     }
     private char douem(char c) {
-        switch((c - '°¡') / 28){
-            // ³à, ´¢, ´º, ´Ï
+        switch((c - 'ê°€') / 28){
+            // ë…€, ë‡¨, ë‰´, ë‹ˆ
             case 48: case 54:
             case 59: case 62:
                 c += 5292;
                 break;
-            // ·ª, ·Á, ·Ê, ·á, ·ù, ¸®
+            // ë´, ë ¤, ë¡€, ë£Œ, ë¥˜, ë¦¬
             case 107: case 111:
             case 112: case 117:
             case 122: case 125:
                 c += 3528;
                 break;
-            // ¶ó, ·¡, ·Î, ·Ú, ·ç, ¸£
+            // ë¼, ë˜, ë¡œ, ë¢°, ë£¨, ë¥´
             case 105: case 106:
             case 113: case 116:
             case 118: case 123:

@@ -14,14 +14,14 @@ public class Game {
     private String lastword;
     private boolean end;
     private Game() {
-        lastword = "Ã¹ ´Ü¾î¸¦ Á¤ÇØÁÖ¼¼¿ä.";
+        lastword = "ì²« ë‹¨ì–´ë¥¼ ì •í•´ì£¼ì„¸ìš”.";
         end = false;
     }
 
     public String getLastWord() { return lastword; }
     public boolean nextWord(String str) {
-        if(wordManager.isWord(str)) return false;
-        if(str.equalsIgnoreCase("Ã¹ ´Ü¾î¸¦ Á¤ÇØÁÖ¼¼¿ä.")||!wordManager.isHanbangWord(str)) {
+        if(!wordManager.isWord(str)) return false;
+        if(str.equalsIgnoreCase("ì²« ë‹¨ì–´ë¥¼ ì •í•´ì£¼ì„¸ìš”.")||!wordManager.isHanbangWord(str)) {
             lastword = str;
             return true;
         }

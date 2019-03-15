@@ -19,7 +19,7 @@ import java.util.concurrent.*;
 import java.util.regex.Pattern;
 
 public class DBCrawling {
-    private static Pattern pattern = Pattern.compile("^([°¡-ÆR])[°¡-ÆR]+$");
+    private static Pattern pattern = Pattern.compile("^([ê°€-í£])[ê°€-í£]+$");
     private final short THREADAMOUNT = 50;
     private final int MAXIDX = 519028;// 519208;
 
@@ -33,33 +33,33 @@ public class DBCrawling {
         File file = new File("Data", "db.txt");
         Set<String> words;
         if(!file.exists()) {
-            System.out.println("±¹¸³±¹¾î¿ø Ç¥ÁØ±¹¾î´ë»çÀü ¿¡¼­ ´Ü¾î Å©·Ñ¸µÀ» ½ÃÀÛÇÕ´Ï´Ù.");
+            System.out.println("êµ­ë¦½êµ­ì–´ì› í‘œì¤€êµ­ì–´ëŒ€ì‚¬ì „ ì—ì„œ ë‹¨ì–´ í¬ë¡¤ë§ì„ ì‹œì‘í•©ë‹ˆë‹¤.");
             long mills = System.currentTimeMillis();
             try {
                 words = start();
                 System.gc();
             } catch (ExecutionException | InterruptedException | IOException e) {
                 e.printStackTrace();
-                System.out.println("Å©·Ñ¸µÁß ¿À·ù°¡ ¹ß»ıÇÏ¿© ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.");
+                System.out.println("í¬ë¡¤ë§ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì—¬ í”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.");
                 System.exit(1);
                 return null;
             }
-            System.out.println("Å©·Ñ¸µÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù. °É¸°½Ã°£: "+(System.currentTimeMillis()-mills)+"ms");
+            System.out.println("í¬ë¡¤ë§ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤. ê±¸ë¦°ì‹œê°„: "+(System.currentTimeMillis()-mills)+"ms");
         } else {
             try {
                 words = new HashSet<>(Files.readAllLines(file.toPath()));
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("ÆÄÀÏÀ» ÀĞ¾î¿À´ÂÁß ¿À·ù°¡ ¹ß»ıÇÏ¿© ÇÁ·Î±×·¥À» Á¾·áÇÕ´Ï´Ù.");
+                System.out.println("íŒŒì¼ì„ ì½ì–´ì˜¤ëŠ”ì¤‘ ì˜¤ë¥˜ê°€ ë°œìƒí•˜ì—¬ í”„ë¡œê·¸ë¨ì„ ì¢…ë£Œí•©ë‹ˆë‹¤.");
                 System.exit(1);
                 return null;
             }
-            System.out.println("¼º°øÀûÀ¸·Î ÆÄÀÏÀ» ÀĞ¾î¿Ô½À´Ï´Ù.");
+            System.out.println("ì„±ê³µì ìœ¼ë¡œ íŒŒì¼ì„ ì½ì–´ì™”ìŠµë‹ˆë‹¤.");
         }
-        System.out.println("µî·ÏµÈ ´Ü¾î °¹¼ö: "+words.size());
+        System.out.println("ë“±ë¡ëœ ë‹¨ì–´ ê°¯ìˆ˜: "+words.size());
         return words;
     }
-    //¸¶Áö¸· ´Ü¾î http://stdweb2.korean.go.kr/search/View.jsp?idx=519208
+    //ë§ˆì§€ë§‰ ë‹¨ì–´ http://stdweb2.korean.go.kr/search/View.jsp?idx=519208
     private Set<String> start() throws ExecutionException, InterruptedException, IOException {
         File file = new File("Data", "db.txt");
         if (!file.getParentFile().exists()) file.getParentFile().mkdirs();
@@ -73,17 +73,17 @@ public class DBCrawling {
             futures.add(executor.submit(new Getter(size, i*size)));
             Thread.sleep(10);
         }
-        System.out.println("¾²·¹µå submit");
+        System.out.println("ì“°ë ˆë“œ submit");
         Set<String> list = new LinkedHashSet<>(MAXIDX);
         for(Future<List<String>> future:futures) {
             list.addAll(future.get());
         }
-        System.out.println(list.size()+"°³ ¸ğµÎ ºÒ·¯¿È");
+        System.out.println(list.size()+"ê°œ ëª¨ë‘ ë¶ˆëŸ¬ì˜´");
         String nl = System.getProperty("line.separator");
         StringBuilder sb = new StringBuilder();
         for(String str:list) sb.append(str).append(nl);
         Files.write(path, sb.toString().getBytes());
-        System.out.println("ÆÄÀÏ ÀúÀå ¿Ï·á");
+        System.out.println("íŒŒì¼ ì €ì¥ ì™„ë£Œ");
         executor.shutdown();
         return new HashSet<>(list);
     }
@@ -106,7 +106,7 @@ public class DBCrawling {
                 int idx = min+i;
                 doc = getDoc(client, "http://stdweb2.korean.go.kr/search/View.jsp?idx="+idx);
                 String str;
-                if(doc.select(".NumRG").text().replace("¡¸", "").replace("¡¹", "").equalsIgnoreCase("¸í»ç")&&!(str=doc.select("#print_area > div > font").text()).contains("ºÏÇÑ")&&!str.contains("¹æ¾ğ")&&!str.contains("¿¾¸»")&&pattern.matcher((str=doc.select(".word_title").text().replace("-", "").replace(" ", "").replace("¤ı", "").replace("^", "").replaceAll("\\d", ""))).matches()) {
+                if(doc.select(".NumRG").text().replace("ã€Œ", "").replace("ã€", "").equalsIgnoreCase("ëª…ì‚¬")&&!(str=doc.select("#print_area > div > font").text()).contains("ë¶í•œ")&&!str.contains("ë°©ì–¸")&&!str.contains("ì˜›ë§")&&pattern.matcher((str=doc.select(".word_title").text().replace("-", "").replace(" ", "").replace("ã†", "").replace("^", "").replaceAll("\\d", ""))).matches()) {
                     list.add(str);
                 }
             }
@@ -121,19 +121,19 @@ public class DBCrawling {
         //long millis = System.currentTimeMillis();
         //http://stdweb2.korean.go.kr/search/List_dic.jsp?idx=&go=10&gogroup=&PageRow=35120&ImeMode=&setJaso=&JasoCnt=0&SearchPart=SP&ResultRows=351201&SearchStartText=&SearchEndText=&JasoSearch=&arrSearchLen=0&Table=words%7Cword&Gubun=0&OrgLang=&TechTerm=&SearchText=&SpCode=9&SpCode=7&SpCode=2&SpCode=1&SpCode=8&SpCode=3
         //http://stdweb2.korean.go.kr/search/List_dic.jsp?seq=&PageRow=10&Table=words%7Cword&Gubun=0&SearchPart=Simple&SearchText=%EC%9D%B8%EC%82%AC
-        //°Ë»ö¾î: ÀÎ»ç
+        //ê²€ìƒ‰ì–´: ì¸ì‚¬
         //http://stdweb2.korean.go.kr/search/List_dic.jsp?idx=&go=&gogroup=1&PageRow=351201&ImeMode=&setJaso=&JasoCnt=0&SearchPart=SP&ResultRows=351201&SearchStartText=&SearchEndText=&JasoSearch=&arrSearchLen=0&Table=words%7Cword&Gubun=0&OrgLang=&TechTerm=&SearchText=&SpCode=9&SpCode=7&SpCode=2&SpCode=1&SpCode=8&SpCode=3
-        //¸ğµÎ °¡Á®¿À±â
+        //ëª¨ë‘ ê°€ì ¸ì˜¤ê¸°
         //351201
-        //°¹¼ö
+        //ê°¯ìˆ˜
         //String maxsizestr = Jsoup.connect("http://stdweb2.korean.go.kr/search/List_dic.jsp?idx=&go=&gogroup=&PageRow=1&ImeMode=&arrSearchLen=0&setJaso=&JasoCnt=&SearchPart=SP&ResultRows=0&Table=words%7Cword&OrgLang=&TechTerm=&Gubun=0&SearchText=&focus_name=SearchText&SpCode=1&SearchStartText=&SearchEndText=&Jaso1=&Jaso2=&Jaso3=&Jaso1=&Jaso2=&Jaso3=&Jaso1=&Jaso2=&Jaso3=&Jaso1=&Jaso2=&Jaso3=&JasoSearch=")
         //        .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.121 Safari/537.36")
         //        .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
         //        .header("Accept-Encoding", "gzip, deflate")
         //        .header("Accept-Language", "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7")
-        //        .timeout(0).get().select(".tb12").text().replace("¿¡ ´ëÇÑ °Ë»ö °á°úÀÔ´Ï´Ù.(", "").replace("°Ç)", "");
+        //        .timeout(0).get().select(".tb12").text().replace("ì— ëŒ€í•œ ê²€ìƒ‰ ê²°ê³¼ì…ë‹ˆë‹¤.(", "").replace("ê±´)", "");
         //final double maxsize = Double.valueOf(maxsizestr);
-        //System.out.println("´Ü¾î °¹¼ö: " + maxsize);
+        //System.out.println("ë‹¨ì–´ ê°¯ìˆ˜: " + maxsize);
         //final short threadcount = 9;
         //final short threadinitcount = 3;
         //100 = 118302
@@ -146,13 +146,13 @@ public class DBCrawling {
         //    for (Crawler crawler : crawlers) { crawler.start(); }
         //    for (Crawler crawler : crawlers) { crawler.join(); }
         //    }
-        //    System.out.println("°É¸°½Ã°£: " + (System.currentTimeMillis() - millis) + "ms");
+        //    System.out.println("ê±¸ë¦°ì‹œê°„: " + (System.currentTimeMillis() - millis) + "ms");
         //    BufferedWriter writer = new BufferedWriter(new FileWriter(file));
         //    for (String word : wordSet) {
         //    writer.write(word + "\n");
         //    }
         //    writer.flush();
-        //    System.out.println("ÀúÀå ¿Ï·á ÃÑ ¹Ş¾Æ¿Â°¹¼ö: " + wordSet.size());
+        //    System.out.println("ì €ì¥ ì™„ë£Œ ì´ ë°›ì•„ì˜¨ê°¯ìˆ˜: " + wordSet.size());
         //    writer.close();
     //}
     /*private class Crawler extends Thread {
@@ -167,23 +167,23 @@ public class DBCrawling {
         @Override
         public void run() {
             try {
-                System.out.println(this.page + "¹ø ¾²·¹µå ½ÃÀÛ size: " + this.size);
+                System.out.println(this.page + "ë²ˆ ì“°ë ˆë“œ ì‹œì‘ size: " + this.size);
                 //Connection.Response response = Jsoup.connect("http://stdweb2.korean.go.kr/search/List_dic.jsp?idx=&go=" + this.page + "&gogroup=&PageRow=" + this.size + "&ImeMode=&setJaso=&JasoCnt=0&SearchPart=SP&ResultRows=351201&SearchStartText=&SearchEndText=&JasoSearch=&arrSearchLen=0&Table=words%7Cword&Gubun=0&OrgLang=&TechTerm=&SearchText=&SpCode=9&SpCode=7&SpCode=2&SpCode=1&SpCode=8&SpCode=3")
                 //        .method(Connection.Method.GET)
                 //        .timeout(0).execute();
                 Document doc = getDoc("http://stdweb2.korean.go.kr/search/List_dic.jsp?idx=&go=" + this.page + "&gogroup=&PageRow=" + this.size + "&ImeMode=&setJaso=&JasoCnt=0&SearchPart=SP&SearchStartText=&SearchEndText=&JasoSearch=&arrSearchLen=0&Table=words%7Cword&Gubun=0&OrgLang=&TechTerm=&SearchText=&SpCode=9&SpCode=7&SpCode=2&SpCode=1&SpCode=8&SpCode=3");
-                System.out.println(this.page + "¹ø ¾²·¹µå " + doc.select(".page_on").text() + "ÆäÀÌÁö");
+                System.out.println(this.page + "ë²ˆ ì“°ë ˆë“œ " + doc.select(".page_on").text() + "í˜ì´ì§€");
                 Elements elements = doc.select("p.exp a");
                 Set<String> wordList = new HashSet<>(this.size);
                 String word;
                 for (Element element : elements) {
-                    if (pattern.matcher(word = element.text().trim().replace("-", "").replace(" ", "").replace("¤ı", "").replace("^", "").replace("</", "")).matches()) {
+                    if (pattern.matcher(word = element.text().trim().replace("-", "").replace(" ", "").replace("ã†", "").replace("^", "").replace("</", "")).matches()) {
                         wordList.add(word);
                     }
                 }
-                System.out.println(this.page + "¹ø ¾²·¹µå ¸ğµÎ ÀúÀåÇÔ ´Ü¾î°³¼ö: " + wordList.size());
+                System.out.println(this.page + "ë²ˆ ì“°ë ˆë“œ ëª¨ë‘ ì €ì¥í•¨ ë‹¨ì–´ê°œìˆ˜: " + wordList.size());
                 wordSet.addAll(wordList);
-                System.out.println(this.page + "" + "¹ø ¾²·¹µå Á¾·á");
+                System.out.println(this.page + "" + "ë²ˆ ì“°ë ˆë“œ ì¢…ë£Œ");
             } catch (IOException e) {
                 e.printStackTrace();
             }
